@@ -15,12 +15,39 @@ class GameState:
 
         self.white_to_move = True
         self.move_log = []
+        self.move_functions = {"p": self.get_pawn_moves, "R": self.get_rook_moves}
 
     def make_move(self, move):
-        self.board[move.start_row][move.start_col], self.board[move.end_row][move.end_col] = "--", \
-            self.board[move.start_row][move.start_col]
+        self.board[move.start_row][move.start_col] = "--"
+        self.board[move.end_row][move.end_col] = move.piece_moved
         self.move_log.append(move)
         self.white_to_move = not self.white_to_move
+
+    def undo_move(self):
+        if len(self.move_log) != 0:
+            move = self.move_log.pop()
+            self.board[move.start_row][move.start_col] = move.piece_moved
+            self.board[move.end_row][move.end_col] = move.piece_captured
+            self.white_to_move = not self.white_to_move
+
+    def get_valid_moves(self):
+        return self.get_all_possible_moves()
+
+    def get_all_possible_moves(self):
+        moves = []
+        for r in range(len(self.board)):
+            for c in range(len(self.board[r])):
+                turn = self.board[r][c][0]
+                if (turn == "w" and self.white_to_move) or (turn == "b" and not self.white_to_move):
+                    piece = self.board[r][c][1]
+                    self.move_functions[piece](r, c, moves)
+        return moves
+
+    def get_pawn_moves(self, r, c, moves):
+        pass
+
+    def get_rook_moves(self, r, c, moves):
+        pass
 
 
 class Move:
@@ -39,6 +66,11 @@ class Move:
         self.piece_moved = board[self.start_row][self.start_col]
         self.piece_captured = board[self.end_row][self.end_col]
         self.move_ID = self.start_row * 1000 + self.start_col * 100 + self.end_row * 10 + self.end_col
+
+    def __eq__(self, other):
+        if isinstance(other, Move):
+            return self.move_ID == other.move_ID
+        return False
 
     def get_chess_notation(self):
         return self.get_rank_file(self.start_row, self.start_col) + self.get_rank_file(self.end_row, self.end_col)
