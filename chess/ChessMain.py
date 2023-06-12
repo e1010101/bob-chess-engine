@@ -47,8 +47,10 @@ def main():
                     if move in valid_moves:
                         gs.make_move(move)
                         move_made = True
-                    sq_selected = ()
-                    player_clicks = []
+                        sq_selected = ()
+                        player_clicks = []
+                    else:
+                        player_clicks = [sq_selected]
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_z:
                     gs.undo_move()
