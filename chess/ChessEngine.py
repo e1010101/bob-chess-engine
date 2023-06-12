@@ -19,6 +19,8 @@ class GameState:
                                "N": self.get_knight_moves, "Q": self.get_queen_moves, "K": self.get_king_moves}
         self.white_king_location = (7, 4)
         self.black_king_location = (0, 4)
+        self.checkmate = False
+        self.stalemate = False
 
     def make_move(self, move):
         self.board[move.start_row][move.start_col] = "--"
@@ -50,6 +52,14 @@ class GameState:
                 moves.remove(moves[i])
             self.white_to_move = not self.white_to_move
             self.undo_move()
+        if len(moves) == 0:
+            if self.in_check():
+                self.checkmate = True
+            else:
+                self.stalemate = True
+        else:
+            self.checkmate = False
+            self.stalemate = False
         return moves
 
     def in_check(self):
