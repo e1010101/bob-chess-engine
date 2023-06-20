@@ -43,7 +43,6 @@ def main():
                     player_clicks.append(sq_selected)
                 if len(player_clicks) == 2:
                     move = Move(player_clicks[0], player_clicks[1], gs.board)
-                    print(move.get_chess_notation())
                     for i in range(len(valid_moves)):
                         if move == valid_moves[i]:
                             gs.make_move(valid_moves[i])
